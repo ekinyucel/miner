@@ -1,7 +1,6 @@
 from tweepy import Stream
 from tweepy.streaming import StreamListener
 import time
-import json
 
 class HashtagListener(StreamListener):
     def __init__(self, time_limit=60):
@@ -16,8 +15,8 @@ class HashtagListener(StreamListener):
     def on_data(self, data):
         if (time.time() - self.start_time) < self.limit:
             try:
-                with open('us.json', 'a') as f:
-                    f.write(data)
+                with open('us.json', 'a') as file:
+                    file.write(data)
                     return True
             except BaseException as e:
                 print("Error on_data: %s" % str(e))

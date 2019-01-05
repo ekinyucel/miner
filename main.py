@@ -1,4 +1,5 @@
 import config
+import sys
 import tweepy
 from tweepy import OAuthHandler, Stream
 import json
@@ -9,5 +10,7 @@ auth.set_access_token(config.access_token, config.access_secret)
 
 api = tweepy.API(auth)
 
-twitter_stream = Stream(auth, hashtagListener.HashtagListener(time_limit=20))
-twitter_stream.filter(track=['#governmentshutdown'])
+print(sys.argv[1])
+
+twitter_stream = Stream(auth, hashtagListener.HashtagListener(time_limit=60))
+twitter_stream.filter(track=['#' + sys.argv[1] + ''])
