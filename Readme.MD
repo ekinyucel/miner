@@ -1,5 +1,9 @@
+# Twitter Miner
+
+Streaming tweets by hashtag.
+
 # How to run
 
-Hashtag which is going to be tracked should be passed as an argument
+Add your own config.py file for twitter API credentials
 
 - python main.py governmentshutdown

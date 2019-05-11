@@ -2,20 +2,23 @@ from tweepy import Stream
 from tweepy.streaming import StreamListener
 import time
 
-class HashtagListener(StreamListener):
+class HashtagListener(StreamListener):    
     def __init__(self, time_limit=60):
         self.start_time = time.time()
         self.limit = time_limit
-        self.saveFile = open('us.json', 'a')
+        self.saveFile = open('file.json', 'a')
         super(HashtagListener, self).__init__()
 
     def on_connect(self):
         print("start fetching the tweets")
 
+    def on_status(self, status):
+        print(status.text)
+
     def on_data(self, data):
         if (time.time() - self.start_time) < self.limit:
             try:
-                with open('us.json', 'a') as file:
+                with open('file.json', 'a') as file:
                     file.write(data)
                     return True
             except BaseException as e:
