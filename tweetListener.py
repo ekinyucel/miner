@@ -3,7 +3,6 @@ from tweepy.streaming import StreamListener
 import time
 import csv
 
-
 class TweetListener(StreamListener):
     def __init__(self, time_limit=60):
         self.start_time = time.time()
@@ -11,7 +10,7 @@ class TweetListener(StreamListener):
         self.filename = 'data'+'_'+time.strftime('%Y%m%d-%H%M%S')+'.csv'
         csvfile = open(self.filename, 'w')
 
-        csvWriter = csv.writer(csvfile)
+        csvWriter = csv.writer(csvfile, delimiter=";", quoting=csv.QUOTE_ALL)
 
         csvWriter.writerow(['text',
                             'created_at',
@@ -38,7 +37,6 @@ class TweetListener(StreamListener):
                             'user.lang',
                             'user.screen_name',
                             'user.geo_enabled',
-                            'user.profile_background_color',
                             'user.profile_image_url',
                             'user.time_zone',
                             'id',
@@ -50,16 +48,21 @@ class TweetListener(StreamListener):
 
         super(TweetListener, self).__init__()
 
+    def clean_data(self, input):
+        return input.replace("\n", "")
+
     def on_connect(self):
         print("start fetching the tweets")
 
     def on_status(self, status):
         if (time.time() - self.start_time) < self.limit:
-            csvFile = open(self.filename, 'a')
-            csvWriter = csv.writer(csvFile)
+            csvFile = open(self.filename, 'a', newline = '', encoding='utf-8')
+            csvWriter = csv.writer(csvFile, delimiter=";", quoting=csv.QUOTE_ALL)
             if not 'RT @' in status.text:
                 try:
-                    csvWriter.writerow([status.text,
+                    status_text = self.clean_data(status.text)
+                    user_description = self.clean_data(status.user.description)
+                    csvWriter.writerow([status_text,
                                         status.created_at,
                                         status.geo,
                                         status.lang,
@@ -67,7 +70,7 @@ class TweetListener(StreamListener):
                                         status.coordinates,
                                         status.user.favourites_count,
                                         status.user.statuses_count,
-                                        status.user.description,
+                                        user_description,
                                         status.user.location,
                                         status.user.id,
                                         status.user.created_at,
@@ -84,7 +87,6 @@ class TweetListener(StreamListener):
                                         status.user.lang,
                                         status.user.screen_name,
                                         status.user.geo_enabled,
-                                        status.user.profile_background_color,
                                         status.user.profile_image_url,
                                         status.user.time_zone,
                                         status.id,

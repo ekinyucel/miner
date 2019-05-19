@@ -1,6 +1,6 @@
 import config
 from sys import argv
-import tweepy
+import tweepy as tw
 from tweepy import OAuthHandler, Stream
 import json
 import tweetListener
@@ -16,11 +16,11 @@ def start_mining(queries):
     auth = OAuthHandler(config.consumer_key, config.consumer_secret)
     auth.set_access_token(config.access_token, config.access_secret)
 
-    api = tweepy.API(auth)
+    api = tw.API(auth)
 
-    streamListener = tweetListener.TweetListener(time_limit=60)
-    twitter_stream = tweepy.Stream(auth=api.auth, listener=streamListener)
+    streamListener = tweetListener.TweetListener(time_limit=540)
+    twitter_stream = tw.Stream(auth=api.auth, listener=streamListener)
 
-    twitter_stream.filter(track=queries, )
+    twitter_stream.filter(track=queries)
 
 start_mining(['' + searchText + ''])
