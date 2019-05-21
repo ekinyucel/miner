@@ -1,12 +1,14 @@
 from tweepy import Stream
 from tweepy.streaming import StreamListener
+from kafka import KafkaProducer
 import time
 import csv
 
 class TweetListener(StreamListener):
-    def __init__(self, time_limit=60):
+    def __init__(self, kafkaProducer, time_limit=60):
         self.start_time = time.time()
         self.limit = time_limit
+        self.producer = kafkaProducer
         self.filename = 'data'+'_'+time.strftime('%Y%m%d-%H%M%S')+'.csv'
         csvfile = open(self.filename, 'w')
 
@@ -95,6 +97,9 @@ class TweetListener(StreamListener):
                                         status.source,
                                         status.favorited,
                                         status.retweet_count])                    
+                    message = status.text + ',' + status.user.screen_name
+                    # sending tweets to kafka broker
+                    producer.send('tweet', str(message))
                 except BaseException as e:
                     print("Error on_data: %s" % str(e))
                 csvFile.close()
