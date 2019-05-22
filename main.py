@@ -2,9 +2,7 @@ import config
 from sys import argv
 import tweepy as tw
 from tweepy import OAuthHandler, Stream
-from kafka.client import KafkaClient
-from kafka.producer import KafkaProducer
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer, KafkaClient
 import json
 import tweetListener
 
@@ -22,7 +20,7 @@ def start_mining(queries):
     api = tw.API(auth)
 
     #client = KafkaClient("localhost:9092")
-    producer = KafkaProducer(bootstrap_servers='localhost:9092')
+    producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
 
     streamListener = tweetListener.TweetListener(kafkaProducer=producer, time_limit=5400)
     twitter_stream = tw.Stream(auth=api.auth, listener=streamListener)
@@ -30,3 +28,10 @@ def start_mining(queries):
     twitter_stream.filter(track=queries)
 
 start_mining(['' + searchText + ''])
+
+consumer = KafkaConsumer('tweet', bootstrap_servers=['localhost:9092'])
+
+for msg in consumer:
+    print(msg.value)
+
+consumer.close()
