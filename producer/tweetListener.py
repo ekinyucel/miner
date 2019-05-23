@@ -1,14 +1,17 @@
 from tweepy import Stream
 from tweepy.streaming import StreamListener
-from kafka import KafkaProducer
+from time import sleep
 import time
 import csv
 
+fetched_tweets = []
+
 class TweetListener(StreamListener):
-    def __init__(self, kafkaProducer, time_limit=60):
+    def __init__(self, kafkaProducer, query, time_limit=60):
         self.start_time = time.time()
         self.limit = time_limit
         self.producer = kafkaProducer
+        self.query = query
         self.filename = 'data'+'_'+time.strftime('%Y%m%d-%H%M%S')+'.csv'
         csvfile = open(self.filename, 'w')
 
@@ -52,6 +55,21 @@ class TweetListener(StreamListener):
 
     def clean_data(self, input):
         return input.replace("\n", "")
+
+    def publish_message(self, producer, topic_name, key, value):
+        result = producer.send('tweet', value=value)
+        record_metadata = ''
+        try:
+            record_metadata = result.get(timeout=10)
+            print('Message published successfully.')
+            sleep(1)
+        except KafkaError:
+            log.exception()
+            pass
+        finally:
+            print (record_metadata.topic)
+            print (record_metadata.partition)
+            print (record_metadata.offset)
 
     def on_connect(self):
         print("start fetching the tweets")
@@ -98,8 +116,7 @@ class TweetListener(StreamListener):
                                         status.favorited,
                                         status.retweet_count])                    
                     message = status.text + ',' + status.user.screen_name
-                    # sending tweets to kafka broker
-                    producer.send('tweet', str(message))
+                    self.publish_message(self.producer, 'tweet', self.query, str(message).encode())  # publishing tweets to kafka broker
                 except BaseException as e:
                     print("Error on_data: %s" % str(e))
                 csvFile.close()

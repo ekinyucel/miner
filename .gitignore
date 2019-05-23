@@ -1,3 +1,6 @@
 __pycache__
-*.json
 config.py
+.vscode
+
+*.json
+*.csv
