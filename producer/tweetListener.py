@@ -57,7 +57,8 @@ class TweetListener(StreamListener):
         return input.replace("\n", "")
 
     def publish_message(self, producer, topic_name, key, value):
-        result = producer.send('tweet', value=value)
+        value_bytes = bytes(value, encoding='utf-8')
+        result = producer.send('tweet', value=value_bytes)
         record_metadata = ''
         try:
             record_metadata = result.get(timeout=10)
