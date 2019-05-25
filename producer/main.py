@@ -32,7 +32,7 @@ def start_mining(queries):
     
     producer = connect_kafka_producer()
 
-    streamListener = tweetListener.TweetListener(kafkaProducer=producer, query=queries, time_limit=180)
+    streamListener = tweetListener.TweetListener(kafkaProducer=producer, query=queries, time_limit=540)
     twitter_stream = tw.Stream(auth=api.auth, listener=streamListener)
 
     twitter_stream.filter(track=queries)
