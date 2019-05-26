@@ -4,8 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/gorilla/mux"
 )
 
 var (
@@ -20,13 +18,15 @@ var (
 var logger = log.New(os.Stdout, "main: ", log.LstdFlags)
 
 func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/ws", ServeSocket)
+	hub := initHub()
+	go hub.start()
 
-	server := NewServer(router, serverPort)
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWebSocket(hub, w, r)
+	})
+
+	go ConsumeKafkaTopic(hub)
 
 	logger.Printf("The server is listening on port %v", serverPort)
-	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		logger.Fatalf("Could not listen on %q: %s\n", serverPort, err)
-	}
+	log.Fatal(http.ListenAndServe(":9090", nil))
 }

@@ -5,11 +5,10 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-
 	"github.com/rs/cors"
 )
 
-// NewServer creates a server instance
+// NewServer is used for instantinating socket server// NewServer creates a server instance
 func NewServer(router *mux.Router, addr string) *http.Server {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200"},

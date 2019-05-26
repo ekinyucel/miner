@@ -4,12 +4,11 @@ import (
 	"context"
 	"time"
 
-	socketio "github.com/googollee/go-socket.io"
 	"github.com/segmentio/kafka-go"
 )
 
 // ConsumeKafkaTopic is used for consuming messages of the kafka topic
-func ConsumeKafkaTopic(server *socketio.Server) {
+func ConsumeKafkaTopic(hub *Hub) {
 	config := kafka.ReaderConfig{
 		Brokers:         kafkaBrokerURL,
 		GroupID:         kafkaClientID,
@@ -30,5 +29,6 @@ func ConsumeKafkaTopic(server *socketio.Server) {
 		}
 
 		logger.Printf("topic / partition / offset / value : %v / %v / %v : %s \n", m.Topic, m.Partition, m.Offset, string(m.Value)) // converting byte array to string - deserialization
+		hub.inbound <- m.Value                                                                                                      // hub send message to message channel function is needed
 	}
 }
