@@ -29,6 +29,6 @@ func ConsumeKafkaTopic(hub *Hub) {
 		}
 
 		logger.Printf("topic / partition / offset / value : %v / %v / %v : %s \n", m.Topic, m.Partition, m.Offset, string(m.Value)) // converting byte array to string - deserialization
-		hub.inbound <- m.Value                                                                                                      // hub send message to message channel function is needed
+		hub.inbound <- m.Value
 	}
 }

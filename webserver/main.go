@@ -21,6 +21,7 @@ func main() {
 	hub := initHub()
 	go hub.start()
 
+	// TODO move this part into a separate file
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWebSocket(hub, w, r)
 	})

@@ -1,13 +1,11 @@
 module miner_webserver
 
 require (
-	github.com/golang/dep v0.5.3 // indirect
-	github.com/googollee/go-socket.io v1.4.1
-	github.com/gorilla/handlers v1.4.0
 	github.com/gorilla/mux v1.7.2
 	github.com/gorilla/websocket v1.4.0
-	github.com/pkg/errors v0.8.1 // indirect
 	github.com/rs/cors v1.6.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/segmentio/kafka-go v0.2.4
+	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2 // indirect
+	gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 // indirect
 )
